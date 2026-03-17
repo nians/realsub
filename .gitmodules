@@ -1,0 +1,3 @@
+[submodule "vendor/whisper_streaming"]
+	path = vendor/whisper_streaming
+	url = https://github.com/ufal/whisper_streaming.git
