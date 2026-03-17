@@ -1,15 +1,33 @@
-# Whisper model settings (faster-whisper CTranslate2 backend via whisper_streaming)
-WHISPER_MODEL_DIR = "models/whisper-small-singlish-ct2"  # Fine-tuned for Singapore English
-COMPUTE_TYPE = "int8"           # int8 is fast on Apple Silicon
+# Whisper model settings
+WHISPER_MODEL = "models/whisper-small-singlish-ct2"
+
+
+def _detect_device():
+    """Auto-detect: NVIDIA GPU → cuda/float16, otherwise → cpu/int8."""
+    try:
+        import ctranslate2
+        if ctranslate2.get_cuda_device_count() > 0:
+            return "cuda", "float16"
+    except Exception:
+        pass
+    return "cpu", "int8"
+
+
+DEVICE, COMPUTE_TYPE = _detect_device()
 
 # Audio capture settings
-SAMPLE_RATE = 16000             # 16kHz required by Whisper
-CHANNELS = 1                    # Mono
-CHUNK_INTERVAL = 1.0            # Seconds per audio chunk fed to whisper_streaming
+SAMPLE_RATE = 16000
+CHANNELS = 1
+
+# Chunking settings
+CHUNK_DURATION = 2.0
+SILENCE_THRESHOLD = 0.03
+SILENCE_DURATION = 0.8
+MAX_CHUNK_DURATION = 5.0
 
 # Subtitle overlay settings
-SUBTITLE_LINES = 3              # Number of lines visible on overlay
-FONT_SIZE = 28                  # Subtitle font size in pixels
-OVERLAY_OPACITY = 180           # Background opacity (0-255)
-OVERLAY_MARGIN_BOTTOM = 80      # Pixels from bottom of screen
-OVERLAY_WIDTH_RATIO = 0.7       # Width as fraction of screen width
+SUBTITLE_LINES = 3
+FONT_SIZE = 28
+OVERLAY_OPACITY = 180
+OVERLAY_MARGIN_BOTTOM = 80
+OVERLAY_WIDTH_RATIO = 0.7
